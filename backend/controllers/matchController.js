@@ -168,8 +168,10 @@ export const getSupabaseDiscover = async (req, res) => {
     let query = supabaseAdmin.from("profiles").select("*").neq("id", userId).limit(100);
 
     if (search.trim()) {
-      const safeSearch = search.trim().replace(/"/g, '""');
-      query = query.or(`name.ilike."%${safeSearch}%",skills.ilike."%${safeSearch}%"`);
+      const safeSearch = search.trim().replace(/[",()]/g, '');
+      if (safeSearch) {
+        query = query.or(`name.ilike."%${safeSearch}%",skills.ilike."%${safeSearch}%"`);
+      }
     }
 
     if (filter !== "All") {
